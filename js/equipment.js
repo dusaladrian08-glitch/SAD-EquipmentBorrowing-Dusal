@@ -19,11 +19,18 @@ function showEquipmentMessage(message, type) {
 async function addEquipment(event) {
     event.preventDefault();
 
+    const equipmentId =
+        document.getElementById("equipmentId").value;
+
     const equipmentName =
-        document.getElementById("equipmentName").value.trim();
+        document.getElementById("equipmentName")
+            .value
+            .trim();
 
     const category =
-        document.getElementById("category").value.trim();
+        document.getElementById("category")
+            .value
+            .trim();
 
     const assetCode =
         document.getElementById("assetCode")
@@ -33,6 +40,8 @@ async function addEquipment(event) {
 
     const condition =
         document.getElementById("condition").value;
+
+    const isEditing = equipmentId !== "";
 
     showEquipmentMessage("", "");
 
@@ -61,35 +70,62 @@ async function addEquipment(event) {
     }
 
     equipmentSubmitButton.disabled = true;
-    equipmentSubmitButton.textContent = "Saving...";
 
-    const { error } = await supabaseClient
-        .from("equipment")
-        .insert({
-            equipment_name: equipmentName,
-            category: category,
-            asset_code: assetCode,
-            condition: condition,
-            availability: "Available"
-        });
+    equipmentSubmitButton.textContent = isEditing
+        ? "Updating..."
+        : "Saving...";
+
+    let result;
+
+    if (isEditing) {
+        result = await supabaseClient
+            .from("equipment")
+            .update({
+                equipment_name: equipmentName,
+                category: category,
+                asset_code: assetCode,
+                condition: condition
+            })
+            .eq("id", Number(equipmentId));
+    } else {
+        result = await supabaseClient
+            .from("equipment")
+            .insert({
+                equipment_name: equipmentName,
+                category: category,
+                asset_code: assetCode,
+                condition: condition,
+                availability: "Available"
+            });
+    }
 
     equipmentSubmitButton.disabled = false;
-    equipmentSubmitButton.textContent = "Add Equipment";
 
-    if (error) {
-        console.error("Add equipment error:", error);
+    if (result.error) {
+        console.error(
+            "Equipment save error:",
+            result.error
+        );
+
+        equipmentSubmitButton.textContent = isEditing
+            ? "Update Equipment"
+            : "Add Equipment";
 
         if (
-            error.code === "23505" ||
-            error.message.toLowerCase().includes("duplicate")
+            result.error.code === "23505" ||
+            result.error.message
+                .toLowerCase()
+                .includes("duplicate")
         ) {
             showEquipmentMessage(
-                "That asset code already exists. Enter a unique asset code.",
+                "That asset code already exists. " +
+                "Enter a different asset code.",
                 "error"
             );
         } else {
             showEquipmentMessage(
-                "Unable to save equipment: " + error.message,
+                "Unable to save equipment: " +
+                result.error.message,
                 "error"
             );
         }
@@ -97,16 +133,18 @@ async function addEquipment(event) {
         return;
     }
 
+    const successMessage = isEditing
+        ? "Equipment updated successfully."
+        : "Equipment added successfully.";
+
+    cancelEquipmentEdit();
+
     showEquipmentMessage(
-        "Equipment added successfully.",
+        successMessage,
         "success"
     );
 
-    equipmentForm.reset();
-
-document.getElementById("condition").value = "Good";
-
-loadEquipment();
+    await loadEquipment();
 }
 
 if (equipmentForm) {

@@ -279,13 +279,12 @@ async function recordBorrowing(event) {
             "Please try again.",
             "error"
         );
+submitButton.disabled = false;
+submitButton.textContent =
+    "Save Borrowing Transaction";
 
-        submitButton.disabled = false;
-        submitButton.textContent =
-            "Save Borrowing Transaction";
-
-        await loadEquipment();
-        return;
+await loadEquipment();
+await loadTransactions();
     }
 
     borrowingForm.reset();
