@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Login | Equipment Borrowing System</title>
+
+    <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body class="login-page">
+
+    <main class="login-container">
+        <section class="login-card">
+
+            <div class="login-header">
+                <div class="login-icon">🖥️</div>
+
+                <h1>Equipment Borrowing System</h1>
+
+                <p>
+                    Sign in to manage equipment and borrowing
+                    transactions.
+                </p>
+            </div>
+
+            <form id="loginForm">
+
+                <div class="form-group">
+                    <label for="email">Email Address</label>
+
+                    <input
+                        type="email"
+                        id="email"
+                        name="email"
+                        placeholder="Enter your email address"
+                        autocomplete="email"
+                        required
+                    >
+                </div>
+
+                <div class="form-group">
+                    <label for="password">Password</label>
+
+                    <input
+                        type="password"
+                        id="password"
+                        name="password"
+                        placeholder="Enter your password"
+                        autocomplete="current-password"
+                        required
+                    >
+                </div>
+
+                <button
+                    type="submit"
+                    id="loginButton"
+                    class="login-button"
+                >
+                    Sign In
+                </button>
+
+                <p
+                    id="loginMessage"
+                    class="login-message"
+                    aria-live="polite"
+                ></p>
+
+            </form>
+        </section>
+    </main>
+
+    <!-- Supabase JavaScript library -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+    <!-- Supabase connection -->
+    <script src="js/supabase.js"></script>
+
+    <!-- Login functions -->
+    <script src="js/auth.js"></script>
+
+</body>
+</html>

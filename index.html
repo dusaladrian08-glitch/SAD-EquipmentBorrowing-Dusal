@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Dashboard | Equipment Borrowing System</title>
+
+    <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body class="dashboard-page">
+
+    <header class="top-header">
+        <div>
+            <h1>Equipment Borrowing System</h1>
+            <p>Equipment and transaction monitoring</p>
+        </div>
+
+        <button
+            type="button"
+            class="logout-button"
+            onclick="logout()"
+        >
+            Logout
+        </button>
+    </header>
+
+    <nav class="navigation">
+        <a href="#dashboard">Dashboard</a>
+        <a href="#equipment">Equipment</a>
+        <a href="#borrowing">New Borrowing</a>
+        <a href="#transactions">Transactions</a>
+    </nav>
+
+    <main class="main-content">
+
+        <!-- DASHBOARD -->
+        <section id="dashboard" class="page-section">
+            <div class="section-heading">
+                <div>
+                    <h2>Dashboard</h2>
+                    <p>Overview of equipment and transactions</p>
+                </div>
+            </div>
+
+            <div class="dashboard-cards">
+
+                <article class="summary-card total-card">
+                    <span class="card-label">Total Equipment</span>
+                    <strong id="totalEquipment">0</strong>
+                </article>
+
+                <article class="summary-card available-card">
+                    <span class="card-label">Available</span>
+                    <strong id="availableEquipment">0</strong>
+                </article>
+
+                <article class="summary-card borrowed-card">
+                    <span class="card-label">Borrowed</span>
+                    <strong id="borrowedEquipment">0</strong>
+                </article>
+
+                <article class="summary-card returned-card">
+                    <span class="card-label">
+                        Returned Transactions
+                    </span>
+                    <strong id="returnedTransactions">0</strong>
+                </article>
+
+                <article class="summary-card overdue-card">
+                    <span class="card-label">Overdue</span>
+                    <strong id="overdueTransactions">0</strong>
+                </article>
+
+            </div>
+        </section>
+
+        <!-- EQUIPMENT -->
+        <section id="equipment" class="page-section">
+            <div class="section-heading">
+                <div>
+                    <h2>Equipment Management</h2>
+                    <p>Add, view, edit, and delete equipment</p>
+                </div>
+            </div>
+
+            <div class="content-grid">
+
+                <div class="panel">
+                    <h3 id="equipmentFormTitle">
+                        Add New Equipment
+                    </h3>
+
+                    <form id="equipmentForm">
+
+                        <input
+                            type="hidden"
+                            id="equipmentId"
+                        >
+
+                        <div class="form-group">
+                            <label for="equipmentName">
+                                Equipment Name
+                            </label>
+
+                            <input
+                                type="text"
+                                id="equipmentName"
+                                placeholder="Example: Epson Projector"
+                                required
+                            >
+                        </div>
+
+                        <div class="form-group">
+                            <label for="category">
+                                Category
+                            </label>
+
+                            <input
+                                type="text"
+                                id="category"
+                                placeholder="Example: Projector"
+                                required
+                            >
+                        </div>
+
+                        <div class="form-group">
+                            <label for="assetCode">
+                                Asset Code
+                            </label>
+
+                            <input
+                                type="text"
+                                id="assetCode"
+                                placeholder="Example: PROJ-001"
+                                required
+                            >
+                        </div>
+
+                        <div class="form-group">
+                            <label for="condition">
+                                Condition
+                            </label>
+
+                            <select id="condition" required>
+                                <option value="Good">Good</option>
+                                <option value="Fair">Fair</option>
+                                <option value="For Repair">
+                                    For Repair
+                                </option>
+                            </select>
+                        </div>
+
+                        <div class="form-actions">
+                            <button
+                                type="submit"
+                                id="equipmentSubmitButton"
+                                class="primary-button"
+                            >
+                                Add Equipment
+                            </button>
+
+                            <button
+                                type="button"
+                                id="cancelEditButton"
+                                class="secondary-button hidden"
+                            >
+                                Cancel
+                            </button>
+                        </div>
+
+                        <p
+                            id="equipmentMessage"
+                            class="form-message"
+                            aria-live="polite"
+                        ></p>
+
+                    </form>
+                </div>
+
+                <div class="panel table-panel">
+                    <div class="table-toolbar">
+                        <input
+                            type="search"
+                            id="equipmentSearch"
+                            placeholder="Search name or asset code"
+                        >
+
+                        <select id="availabilityFilter">
+                            <option value="All">
+                                All Availability
+                            </option>
+                            <option value="Available">
+                                Available
+                            </option>
+                            <option value="Borrowed">
+                                Borrowed
+                            </option>
+                        </select>
+                    </div>
+
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Asset Code</th>
+                                    <th>Equipment</th>
+                                    <th>Category</th>
+                                    <th>Condition</th>
+                                    <th>Availability</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+
+                            <tbody id="equipmentTableBody">
+                                <tr>
+                                    <td colspan="6" class="empty-state">
+                                        No equipment records yet.
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- BORROWING FORM -->
+        <section id="borrowing" class="page-section">
+            <div class="section-heading">
+                <div>
+                    <h2>New Borrowing Transaction</h2>
+                    <p>Record equipment issued to a borrower</p>
+                </div>
+            </div>
+
+            <div class="panel">
+                <form id="borrowingForm" class="wide-form">
+
+                    <div class="form-group">
+                        <label for="borrowerName">
+                            Borrower Name
+                        </label>
+
+                        <input
+                            type="text"
+                            id="borrowerName"
+                            placeholder="Enter complete name"
+                            required
+                        >
+                    </div>
+
+                    <div class="form-group">
+                        <label for="borrowerType">
+                            Borrower Type
+                        </label>
+
+                        <select id="borrowerType" required>
+                            <option value="">Select type</option>
+                            <option value="Student">Student</option>
+                            <option value="Faculty">Faculty</option>
+                            <option value="Staff">Staff</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="department">
+                            Department
+                        </label>
+
+                        <input
+                            type="text"
+                            id="department"
+                            placeholder="Enter office or department"
+                            required
+                        >
+                    </div>
+
+                    <div class="form-group">
+                        <label for="borrowEquipment">
+                            Equipment
+                        </label>
+
+                        <select id="borrowEquipment" required>
+                            <option value="">
+                                Select available equipment
+                            </option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="dateBorrowed">
+                            Date Borrowed
+                        </label>
+
+                        <input
+                            type="date"
+                            id="dateBorrowed"
+                            required
+                        >
+                    </div>
+
+                    <div class="form-group">
+                        <label for="dueDate">
+                            Due Date
+                        </label>
+
+                        <input
+                            type="date"
+                            id="dueDate"
+                            required
+                        >
+                    </div>
+
+                    <div class="full-width">
+                        <button
+                            type="submit"
+                            class="primary-button"
+                        >
+                            Save Borrowing Transaction
+                        </button>
+                    </div>
+
+                    <p
+                        id="borrowingMessage"
+                        class="form-message full-width"
+                        aria-live="polite"
+                    ></p>
+
+                </form>
+            </div>
+        </section>
+
+        <!-- TRANSACTIONS -->
+        <section id="transactions" class="page-section">
+            <div class="section-heading">
+                <div>
+                    <h2>Borrowing Transactions</h2>
+                    <p>Monitor borrowed, returned, and overdue items</p>
+                </div>
+            </div>
+
+            <div class="panel table-panel">
+                <div class="table-toolbar">
+                    <input
+                        type="search"
+                        id="transactionSearch"
+                        placeholder="Search borrower or equipment"
+                    >
+
+                    <select id="statusFilter">
+                        <option value="All">All Statuses</option>
+                        <option value="Borrowed">Borrowed</option>
+                        <option value="Returned">Returned</option>
+                        <option value="Overdue">Overdue</option>
+                    </select>
+                </div>
+
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Equipment</th>
+                                <th>Borrower</th>
+                                <th>Type</th>
+                                <th>Department</th>
+                                <th>Date Borrowed</th>
+                                <th>Due Date</th>
+                                <th>Date Returned</th>
+                                <th>Status</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+
+                        <tbody id="transactionTableBody">
+                            <tr>
+                                <td colspan="9" class="empty-state">
+                                    No borrowing transactions yet.
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <footer class="site-footer">
+        <p>
+            Equipment Borrowing and Return Monitoring System
+        </p>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="js/supabase.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/equipment.js"></script>
+    <script src="js/transactions.js"></script>
+
+    <script>
+        requireLogin();
+    </script>
+
+</body>
+</html>
